@@ -1,7 +1,13 @@
 package main
 
-import "fmt"
+import (
+	"os"
+
+	"github.com/manojnakp/fairshare/cli"
+)
 
 func main() {
-	fmt.Println("Hello", "Fairshare")
+	if err := cli.Main(); err != nil {
+		os.Exit(1)
+	}
 }
