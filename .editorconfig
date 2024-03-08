@@ -16,4 +16,9 @@ indent_style = tab
 [*.md]
 trim_trailing_whitespace = false
 
+# JSON
+[*.json]
+indent_size = 2
+indent_style = space
+
 # Thanks to [EditorConfig](https://editorconfig.org)
