@@ -19,6 +19,8 @@ var HealthChecker = "/health"
 type Middleware = func(http.Handler) http.Handler
 
 // With constructs a chain of middlewares using the list of passed ones.
+// The first middleware in the argument gets wrapped around by the later
+// ones. So, outermost middleware (say logger) should be last argument.
 func With(middlewares ...Middleware) Middleware {
 	return func(next http.Handler) http.Handler {
 		for _, mw := range middlewares {

@@ -27,7 +27,7 @@ type ServerBuilder struct {
 func (sb ServerBuilder) Build() *http.Server {
 	return &http.Server{
 		Addr:        net.JoinHostPort(sb.Host, sb.Port),
-		Handler:     With(Logger, HeartBeat)(Router()),
+		Handler:     With(HeartBeat, Logger)(Router()),
 		TLSConfig:   sb.TLSConfig,
 		BaseContext: sb.getContext,
 	}
