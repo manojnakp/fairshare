@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 )
 
 // Router defines routing logic for the fairshare server.
@@ -23,12 +24,17 @@ func (status PlainText) ServeHTTP(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 	w.WriteHeader(code)
-	/* fmt.Fprintf might perform better ?? */
-	_, _ = io.WriteString(w, status.String())
+	_, _ = writeMessage(w, code)
 }
 
 // String implements [fmt.Stringer].
 func (status PlainText) String() string {
-	code := int(status)
-	return fmt.Sprintf("%d %s", code, http.StatusText(code))
+	var w = new(strings.Builder)
+	_, _ = writeMessage(w, int(status))
+	return w.String()
+}
+
+// writeMessage writes code and HTTP status message for given status code.
+func writeMessage(w io.Writer, code int) (int, error) {
+	return fmt.Fprintf(w, "%d %s", code, http.StatusText(code))
 }
