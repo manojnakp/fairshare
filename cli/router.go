@@ -14,6 +14,17 @@ func Router() *http.ServeMux {
 	return mux
 }
 
+// AllowOnly is [http.Handler] in case of HTTP method not in this list of
+// allowed methods. It responds with a 405 PlainText response along with
+// 'Allow' header set to the list of allowed methods.
+type AllowOnly []string
+
+// ServeHTTP implements [http.Handler].
+func (allowed AllowOnly) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Allow", strings.Join(allowed, ", "))
+	PlainText(http.StatusMethodNotAllowed).ServeHTTP(w, r)
+}
+
 // PlainText is [http.Handler] to write a plain text response consisting
 // of status code and text message.
 type PlainText int
