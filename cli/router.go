@@ -20,6 +20,11 @@ func Router() *http.ServeMux {
 type AllowOnly []string
 
 // ServeHTTP implements [http.Handler].
+//
+// Note: Empty allow list has semantic meaning of no method allowed on the
+// target. See [HTTP Semantics] for more info.
+//
+// [HTTP Semantics]: https://www.rfc-editor.org/rfc/rfc9110.html#name-allow
 func (allowed AllowOnly) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Allow", strings.Join(allowed, ", "))
 	PlainText(http.StatusMethodNotAllowed).ServeHTTP(w, r)
