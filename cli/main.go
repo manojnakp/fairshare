@@ -4,7 +4,6 @@ import (
 	"flag"
 	"log"
 	"net"
-	"net/http"
 
 	"github.com/manojnakp/fairshare/api"
 )
@@ -13,11 +12,10 @@ import (
 func Main() error {
 	flag.Parse()
 	addr := net.JoinHostPort(Config.Host, Config.Port)
-	srv := &http.Server{
-		Addr:        addr,
-		Handler:     api.With(api.Logger, api.HeartBeat)(api.Router()),
-		BaseContext: nil,
-	}
+	srv := api.ServerBuilder{
+		Host: Config.Host,
+		Port: Config.Port,
+	}.Build()
 	log.Println("server listening on", addr)
 	return srv.ListenAndServe()
 }
