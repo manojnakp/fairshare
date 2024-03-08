@@ -20,5 +20,5 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version-file: 'go.mod'
-      - name: Build {{ matrix.os }}-{{ matrix.arch }}
-        run: GOOS={{ matrix.os }} GOARCH={{ matrix.arch }} go build .
+      - name: Build ${{ matrix.os }}-${{ matrix.arch }}
+        run: GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} go build .
