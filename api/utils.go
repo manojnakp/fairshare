@@ -1,4 +1,4 @@
-package cli
+package api
 
 import (
 	"fmt"
@@ -7,24 +7,9 @@ import (
 	"strings"
 )
 
-// Router defines routing logic for the fairshare server.
-func Router() *http.ServeMux {
-	mux := http.NewServeMux()
-	mux.Handle("/", PlainText(http.StatusNotFound))
-	mux.HandleFunc("GET /health", HealthCheck)
-	mux.Handle("/health", AllowOnly{"GET"})
-	return mux
-}
-
-// HealthCheck handles the server health endpoint. Basically responds
-// `200 OK` as long as server is alive and kicking.
-func HealthCheck(w http.ResponseWriter, r *http.Request) {
-	PlainText(http.StatusOK).ServeHTTP(w, r)
-}
-
 // AllowOnly is [http.Handler] in case of HTTP method not in this list of
-// allowed methods. It responds with a 405 PlainText response along with
-// 'Allow' header set to the list of allowed methods.
+// allowed methods. It responds with a `405 Method Not Allowed` PlainText
+// response along with 'Allow' header set to the list of allowed methods.
 type AllowOnly []string
 
 // ServeHTTP implements [http.Handler].

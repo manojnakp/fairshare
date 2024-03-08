@@ -5,12 +5,19 @@ import (
 	"log"
 	"net"
 	"net/http"
+
+	"github.com/manojnakp/fairshare/api"
 )
 
 // Main is the entrypoint of the fairshare server CLI.
 func Main() error {
 	flag.Parse()
 	addr := net.JoinHostPort(Config.Host, Config.Port)
+	srv := &http.Server{
+		Addr:        addr,
+		Handler:     api.Router(),
+		BaseContext: nil,
+	}
 	log.Println("server listening on", addr)
-	return http.ListenAndServe(addr, Router())
+	return srv.ListenAndServe()
 }
