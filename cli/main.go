@@ -15,7 +15,7 @@ func Main() error {
 	addr := net.JoinHostPort(Config.Host, Config.Port)
 	srv := &http.Server{
 		Addr:        addr,
-		Handler:     api.Router(),
+		Handler:     api.With(api.Logger)(api.Router()),
 		BaseContext: nil,
 	}
 	log.Println("server listening on", addr)
