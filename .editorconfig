@@ -1,0 +1,19 @@
+# top-most EditorConfig file
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Tab indentation
+[{Makefile,*.go}]
+indent_size = 4
+indent_style = tab
+
+# Markdown needs trailing space
+[*.md]
+trim_trailing_whitespace = false
+
+# Thanks to [EditorConfig](https://editorconfig.org)
