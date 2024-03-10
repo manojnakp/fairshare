@@ -10,9 +10,9 @@ import (
 var LogSource = true
 
 // InitSlog sets up a structured JSON slog.Logger as default.
-func InitSlog(w io.Writer, source bool, level slog.Level) {
+func InitSlog(w io.Writer, level slog.Level) {
 	handler := slog.NewJSONHandler(w, &slog.HandlerOptions{
-		AddSource: source,
+		AddSource: LogSource,
 		Level:     level,
 	})
 	logger := slog.New(handler)
