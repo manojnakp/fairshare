@@ -38,7 +38,7 @@ func (status PlainText) ServeHTTP(w http.ResponseWriter, _ *http.Request) {
 
 // String implements [fmt.Stringer].
 func (status PlainText) String() string {
-	var w = new(strings.Builder)
+	w := new(strings.Builder)
 	_, _ = writeMessage(w, int(status))
 	return w.String()
 }

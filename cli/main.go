@@ -15,13 +15,17 @@ var LogSource = true
 
 // Main is the entrypoint of the fairshare server CLI.
 func Main() error {
-	config.Parse()
+	err := config.Parse()
+	if err != nil {
+		return err
+	}
 	InitSlog(os.Stdout, config.Log())
-	slog.Info("config parse successful", "config", config.Config)
+	slog.Info("config parse", "config", config.Config)
 	srv := api.ServerBuilder{
 		Host: config.Host(),
 		Port: config.Port(),
 	}.Build()
+	slog.Info("server listen", "address", srv.Addr)
 	return srv.ListenAndServe()
 }
 
