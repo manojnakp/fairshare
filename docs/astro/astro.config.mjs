@@ -5,23 +5,21 @@ import starlight from '@astrojs/starlight';
 export default defineConfig({
 	integrations: [
 		starlight({
-			title: 'My Docs',
+			title: 'Fairshare',
 			social: {
-				github: 'https://github.com/withastro/starlight',
+				github: 'https://github.com/manojnakp/fairshare',
 			},
 			sidebar: [
 				{
-					label: 'Guides',
-					items: [
-						// Each item here is one entry in the navigation menu.
-						{ label: 'Example Guide', link: '/guides/example/' },
-					],
-				},
-				{
-					label: 'Reference',
-					autogenerate: { directory: 'reference' },
+					label: 'Walkthrough',
+					autogenerate: { directory: 'walkthrough' },
 				},
 			],
 		}),
 	],
+    vite: {
+        resolve: {
+            preserveSymlinks: true,
+        },
+    },
 });

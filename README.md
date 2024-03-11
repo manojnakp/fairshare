@@ -1,3 +1,8 @@
+---
+title: Welcome to Fairshare
+description: Join the making of Fairshare.
+tableOfContents: false
+---
 # Fairshare
 
 Split bills and expenses shared among a group fairly.
