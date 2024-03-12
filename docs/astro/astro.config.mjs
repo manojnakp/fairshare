@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import starlightOpenAPI, { openAPISidebarGroups } from 'starlight-openapi';
 
 // https://astro.build/config
 export default defineConfig({
@@ -18,7 +19,17 @@ export default defineConfig({
 					label: 'Walkthrough',
 					autogenerate: { directory: 'walkthrough' },
 				},
+                ...openAPISidebarGroups,
 			],
+            plugins: [
+                starlightOpenAPI([
+                    {
+                        base: 'api',
+                        label: 'OpenAPI Reference',
+                        schema: './public/api/openapi.json',
+                    }
+                ])
+            ]
 		}),
 	],
     vite: {
