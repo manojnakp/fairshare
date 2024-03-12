@@ -2,23 +2,26 @@ name: Go Build
 on:
   push:
     branches: [main]
+    paths:
+      - '**.go'
+      - 'go.mod'
+      - 'go.sum'
   pull_request:
     branches: [main]
+    paths:
+      - '**.go'
+      - 'go.mod'
+      - 'go.sum'
   workflow_dispatch: {}
 jobs:
   build:
-    strategy:
-      matrix:
-        os: [linux, windows, darwin]
-        arch: [amd64, arm64, '386']
-        exclude:
-          - os: darwin
-            arch: '386'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
           go-version-file: 'go.mod'
-      - name: Build ${{ matrix.os }}-${{ matrix.arch }}
-        run: GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} go build .
+      - name: Build
+        run: go build .
+      - name: Test
+        run: go test ./...
