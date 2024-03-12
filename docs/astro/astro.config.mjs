@@ -4,6 +4,8 @@ import starlightOpenAPI, { openAPISidebarGroups } from 'starlight-openapi';
 
 // https://astro.build/config
 export default defineConfig({
+    site: 'https://manojnakp.github.io',
+    base: 'fairshare',
 	integrations: [
 		starlight({
 			title: 'Fairshare',
