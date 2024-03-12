@@ -1,0 +1,18 @@
+name: OpenAPI Lint
+on:
+  push:
+    branches: [main]
+    paths: ['docs/openapi/**']
+  pull_request:
+    branches: [main]
+    paths: ['docs/openapi/**']
+  workflow_dispatch: {}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install vacuum
+        run: 'curl -fsSL https://quobix.com/scripts/install_vacuum.sh | sh'
+      - name: Lint openapi.json
+        run: 'vacuum lint -dqs -p docs/openapi/ docs/openapi/openapi.json'
