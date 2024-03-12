@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          sparse-checkout: docs/openapi
       - name: Install vacuum
         run: 'curl -fsSL https://quobix.com/scripts/install_vacuum.sh | sh'
       - name: Lint openapi.json
