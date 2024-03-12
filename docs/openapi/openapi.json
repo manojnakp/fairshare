@@ -1,0 +1,24 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Fairshare",
+    "description": "Share bills and expenses fairly.",
+    "version": "0.1.0",
+    "license": {
+      "name": "Fairshare MIT License",
+      "url": "https://github.com/manojnakp/fairshare/tree/main/LICENSE"
+    },
+    "contact": {
+      "name": "Manojna",
+      "url": "https://github.com/manojnakp",
+      "email": "manojna.gopher@gmail.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://example.org/splitshare"
+    }
+  ],
+  "paths": {},
+  "tags": []
+}
