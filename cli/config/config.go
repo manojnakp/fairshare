@@ -7,6 +7,12 @@ import (
 	"os"
 )
 
+// Config default values.
+const (
+	DefaultPort = "8080"
+	DefaultDB   = "postgres://postgres:secret@localhost:5432/postgres?sslmode=disable"
+)
+
 // ErrConfigParse is a generic error that represents config parsing failed.
 var ErrConfigParse = errors.New("config: failed to parse configuration")
 
@@ -22,8 +28,10 @@ var Config = struct {
 	Host String   `json:"host,omitempty"`
 	Port String   `json:"port,omitempty"`
 	Log  LogLevel `json:"log,omitempty"`
+	DB   String   `json:"db,omitempty"`
 }{
-	Port: "8080",
+	Port: DefaultPort,
+	DB:   DefaultDB,
 }
 
 // Parse parses the configuration from command line flags and environment
@@ -59,4 +67,9 @@ func Port() string {
 // Log returns Config.Log as slog.Level. Not thread-safe.
 func Log() slog.Level {
 	return Config.Log.Get().(slog.Level)
+}
+
+// DB returns Config.DB as a string. Not thread-safe.
+func DB() string {
+	return Config.DB.Get().(string)
 }
