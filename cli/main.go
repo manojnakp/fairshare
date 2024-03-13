@@ -58,9 +58,7 @@ func InitSlog(w io.Writer, level slog.Level) {
 
 // InitDB sets up database connection, or returns error in case of failure.
 func InitDB() (*sql.DB, error) {
-	/* TODO: get DB URI from config */
-	uri := "postgres://postgres:secret@localhost:5432/postgres?sslmode=disable"
-	conn, err := sql.Open("postgres", uri)
+	conn, err := sql.Open("postgres", config.DB())
 	if err != nil {
 		return nil, err
 	}
