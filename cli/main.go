@@ -30,13 +30,13 @@ func Main() error {
 	InitSlog(os.Stdout, config.Log())
 	slog.Info("config parse", "config", config.Config)
 	/* setup database */
-	conn, err := InitDB()
+	db, err := InitDB()
 	if err != nil {
 		return err
 	}
 	slog.Info("db connected")
 	/* setup server */
-	ctx = context.WithValue(ctx, internal.DBKey, conn)
+	ctx = context.WithValue(ctx, internal.DBKey, db)
 	srv := api.ServerBuilder{
 		Host:    config.Host(),
 		Port:    config.Port(),
@@ -58,14 +58,14 @@ func InitSlog(w io.Writer, level slog.Level) {
 
 // InitDB sets up database connection, or returns error in case of failure.
 func InitDB() (*sql.DB, error) {
-	conn, err := sql.Open("postgres", config.DB())
+	db, err := sql.Open("postgres", config.DB())
 	if err != nil {
 		return nil, err
 	}
 	/* ping to verify db is really connected */
-	err = conn.PingContext(context.Background())
+	err = db.PingContext(context.Background())
 	if err != nil {
 		return nil, err
 	}
-	return conn, nil
+	return db, nil
 }
