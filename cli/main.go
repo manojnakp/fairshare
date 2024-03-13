@@ -1,12 +1,17 @@
 package cli
 
 import (
+	"context"
+	"database/sql"
 	"io"
 	"log/slog"
 	"os"
 
 	"github.com/manojnakp/fairshare/api"
 	"github.com/manojnakp/fairshare/cli/config"
+	"github.com/manojnakp/fairshare/internal"
+
+	_ "github.com/lib/pq"
 )
 
 // LogSource ensures that source code position gets logged along with
@@ -15,15 +20,27 @@ var LogSource = true
 
 // Main is the entrypoint of the fairshare server CLI.
 func Main() error {
+	var ctx = context.Background()
+	/* parse config */
 	err := config.Parse()
 	if err != nil {
 		return err
 	}
+	/* setup slog */
 	InitSlog(os.Stdout, config.Log())
 	slog.Info("config parse", "config", config.Config)
+	/* setup database */
+	conn, err := InitDB()
+	if err != nil {
+		return err
+	}
+	slog.Info("db connected")
+	/* setup server */
+	ctx = context.WithValue(ctx, internal.DBKey, conn)
 	srv := api.ServerBuilder{
-		Host: config.Host(),
-		Port: config.Port(),
+		Host:    config.Host(),
+		Port:    config.Port(),
+		Context: ctx,
 	}.Build()
 	slog.Info("server listen", "address", srv.Addr)
 	return srv.ListenAndServe()
@@ -37,4 +54,20 @@ func InitSlog(w io.Writer, level slog.Level) {
 	})
 	logger := slog.New(handler)
 	slog.SetDefault(logger)
+}
+
+// InitDB sets up database connection, or returns error in case of failure.
+func InitDB() (*sql.DB, error) {
+	/* TODO: get DB URI from config */
+	uri := "postgres://postgres:secret@localhost:5432/postgres?sslmode=disable"
+	conn, err := sql.Open("postgres", uri)
+	if err != nil {
+		return nil, err
+	}
+	/* ping to verify db is really connected */
+	err = conn.PingContext(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	return conn, nil
 }
