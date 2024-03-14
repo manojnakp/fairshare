@@ -11,6 +11,7 @@ import (
 const (
 	DefaultPort = "8080"
 	DefaultDB   = "postgres://postgres:secret@localhost:5432/postgres?sslmode=disable"
+	DefaultAuth = "http://localhost:9090"
 )
 
 // ErrConfigParse is a generic error that represents config parsing failed.
@@ -29,9 +30,11 @@ var Config = struct {
 	Port String   `json:"port,omitempty"`
 	Log  LogLevel `json:"log,omitempty"`
 	DB   String   `json:"db,omitempty"`
+	Auth String   `json:"auth,omitempty"`
 }{
 	Port: DefaultPort,
 	DB:   DefaultDB,
+	Auth: DefaultAuth,
 }
 
 // Parse parses the configuration from command line flags and environment
@@ -72,4 +75,9 @@ func Log() slog.Level {
 // DB returns Config.DB as a string. Not thread-safe.
 func DB() string {
 	return Config.DB.Get().(string)
+}
+
+// Auth returns Config.Auth as a string. Not thread-safe.
+func Auth() string {
+	return Config.Auth.Get().(string)
 }

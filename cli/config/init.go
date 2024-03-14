@@ -6,6 +6,7 @@ func init() {
 	EnvRegister(&Config.Port, "FAIRSHARE_PORT")
 	EnvRegister(&Config.Log, "FAIRSHARE_LOG")
 	EnvRegister(&Config.DB, "FAIRSHARE_DB")
+	EnvRegister(&Config.Auth, "FAIRSHARE_AUTH")
 }
 
 // initialise command line flags for parsing configuration
@@ -14,4 +15,5 @@ func init() {
 	cmd.Var(&Config.Port, "port", "port to listen on [env: FAIRSHARE_PORT]")
 	cmd.Var(&Config.Log, "log", "log level above which records get logged [env: FAIRSHARE_LOG]")
 	cmd.Var(&Config.DB, "db", "database URI for persistence [env: FAIRSHARE_DB]")
+	cmd.Var(&Config.Auth, "auth", "authorisation server url [env: FAIRSHARE_AUTH]")
 }
