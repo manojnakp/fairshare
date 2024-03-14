@@ -2,7 +2,9 @@ package api
 
 import (
 	"encoding/json"
+	"github.com/coreos/go-oidc/v3/oidc"
 	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"runtime/debug"
@@ -11,6 +13,9 @@ import (
 
 	"github.com/manojnakp/fairshare/internal"
 )
+
+// bearerPrefix is the prefix in Authorization header.
+const bearerPrefix = "Bearer "
 
 // HealthChecker is the URI endpoint at which heart beat messages are served.
 var HealthChecker = "/health"
@@ -49,6 +54,34 @@ func HeartBeat(next http.Handler) http.Handler {
 		/* prevent caching */
 		w.Header().Set("Cache-Control", "no-cache, no-store")
 		PlainText(http.StatusOK).ServeHTTP(w, r)
+	})
+}
+
+// Authenticator is an HTTP Middleware that checks Authorization header for
+// OpenID Connect Bearer Token.
+func Authenticator(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		authHeader := r.Header.Get("Authorization")
+		prefix := authHeader[:len(bearerPrefix)]
+		if !strings.EqualFold(prefix, bearerPrefix) {
+			/* invalid authorization header */
+			PlainText(http.StatusUnauthorized).ServeHTTP(w, r)
+			slog.Warn("invalid Authorization header", "prefix", prefix)
+			return
+		}
+		ctx := r.Context()
+		rawToken := authHeader[len(bearerPrefix):]
+		verifier := ctx.Value(internal.AuthKey).(*oidc.IDTokenVerifier)
+		token, err := verifier.Verify(ctx, rawToken)
+		if err != nil {
+			/* not authenticated */
+			PlainText(http.StatusUnauthorized).ServeHTTP(w, r)
+			slog.Warn("failed to verify id token", "error", err)
+			return
+		}
+		/* TODO: use token */
+		_ = token
+		next.ServeHTTP(w, r)
 	})
 }
 
