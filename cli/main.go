@@ -3,6 +3,7 @@ package cli
 import (
 	"context"
 	"database/sql"
+	"github.com/coreos/go-oidc/v3/oidc"
 	"io"
 	"log/slog"
 	"os"
@@ -17,6 +18,12 @@ import (
 // LogSource ensures that source code position gets logged along with
 // log record. TODO: Set to false or remove in production release.
 var LogSource = true
+
+// verifierConfig is a custom OIDC verifier configuration to disable
+// `client_id` checks.
+var verifierConfig = &oidc.Config{
+	SkipClientIDCheck: true,
+}
 
 // Main is the entrypoint of the fairshare server CLI.
 func Main() error {
@@ -35,8 +42,15 @@ func Main() error {
 		return err
 	}
 	slog.Info("db connected")
-	/* setup server */
 	ctx = context.WithValue(ctx, internal.DBKey, db)
+	/* setup auth provider */
+	provider, err := oidc.NewProvider(ctx, config.Auth())
+	if err != nil {
+		return err
+	}
+	verifier := provider.Verifier(verifierConfig)
+	ctx = context.WithValue(ctx, internal.AuthKey, verifier)
+	/* setup server */
 	srv := api.ServerBuilder{
 		Host:    config.Host(),
 		Port:    config.Port(),
