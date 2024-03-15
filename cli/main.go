@@ -19,12 +19,6 @@ import (
 // log record. TODO: Set to false or remove in production release.
 var LogSource = true
 
-// verifierConfig is a custom OIDC verifier configuration to verify
-// `client_id` checks.
-var verifierConfig = &oidc.Config{
-	ClientID: config.ClientID(),
-}
-
 // Main is the entrypoint of the fairshare server CLI.
 func Main() error {
 	ctx := context.Background()
@@ -52,7 +46,9 @@ func Main() error {
 	if err != nil {
 		return err
 	}
-	verifier := provider.Verifier(verifierConfig)
+	verifier := provider.Verifier(&oidc.Config{
+		ClientID: config.ClientID(),
+	})
 	ctx = context.WithValue(ctx, internal.VerifierKey, verifier)
 
 	/* setup server */

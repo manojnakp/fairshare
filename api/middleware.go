@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"encoding/json"
 	"log"
 	"log/slog"
 	"net/http"
@@ -59,11 +58,17 @@ func HeartBeat(next http.Handler) http.Handler {
 	})
 }
 
-// Authenticator is an HTTP Middleware that checks Authorization header for
+// Authn is an HTTP Middleware that checks Authorization header for
 // OpenID Connect Bearer Token.
-func Authenticator(next http.Handler) http.Handler {
+func Authn(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("Authorization")
+		if len(authHeader) < len(bearerPrefix) {
+			/* too small authorization header */
+			PlainText(http.StatusUnauthorized).ServeHTTP(w, r)
+			slog.Warn("missing or empty Authorization header", "header", authHeader)
+			return
+		}
 		prefix := authHeader[:len(bearerPrefix)]
 		if !strings.EqualFold(prefix, bearerPrefix) {
 			/* invalid authorization header */
@@ -115,8 +120,7 @@ func Logger(next http.Handler) http.Handler {
 		entry.Size = wrapper.BodyLength
 		entry.Outgoing = wrapper.Header()
 		/* log the record */
-		buf, _ := json.Marshal(entry)
-		log.Println(string(buf))
+		slog.Info("log record", entry)
 	})
 }
 
