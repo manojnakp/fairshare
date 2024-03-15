@@ -1,8 +1,8 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
-	"github.com/coreos/go-oidc/v3/oidc"
 	"log"
 	"log/slog"
 	"net/http"
@@ -12,6 +12,8 @@ import (
 	"time"
 
 	"github.com/manojnakp/fairshare/internal"
+
+	"github.com/coreos/go-oidc/v3/oidc"
 )
 
 // bearerPrefix is the prefix in Authorization header.
@@ -71,7 +73,7 @@ func Authenticator(next http.Handler) http.Handler {
 		}
 		ctx := r.Context()
 		rawToken := authHeader[len(bearerPrefix):]
-		verifier := ctx.Value(internal.AuthKey).(*oidc.IDTokenVerifier)
+		verifier := ctx.Value(internal.VerifierKey).(*oidc.IDTokenVerifier)
 		token, err := verifier.Verify(ctx, rawToken)
 		if err != nil {
 			/* not authenticated */
@@ -79,9 +81,8 @@ func Authenticator(next http.Handler) http.Handler {
 			slog.Warn("failed to verify id token", "error", err)
 			return
 		}
-		/* TODO: use token */
-		_ = token
-		next.ServeHTTP(w, r)
+		ctx = context.WithValue(ctx, internal.TokenKey, token)
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 

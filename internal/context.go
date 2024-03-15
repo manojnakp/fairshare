@@ -3,11 +3,15 @@ package internal
 // dbKey is used to create a value for context key.
 type dbKey struct{}
 
-// authKey is used to create a value for context key.
-type authKey struct{}
+// verifierKey is used to create a value for context key.
+type verifierKey struct{}
+
+// tokenKey is used to create a value for context key.
+type tokenKey struct{}
 
 // Context Keys used across fairshare.
 var (
-	DBKey   dbKey   // *sql.DB
-	AuthKey authKey // *oidc.IDTokenVerifier
+	DBKey       dbKey       // *sql.DB
+	VerifierKey verifierKey // *oidc.IDTokenVerifier
+	TokenKey    tokenKey    // *oidc.IDToken
 )
