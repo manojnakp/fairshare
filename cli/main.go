@@ -19,10 +19,10 @@ import (
 // log record. TODO: Set to false or remove in production release.
 var LogSource = true
 
-// verifierConfig is a custom OIDC verifier configuration to disable
+// verifierConfig is a custom OIDC verifier configuration to verify
 // `client_id` checks.
 var verifierConfig = &oidc.Config{
-	SkipClientIDCheck: true,
+	ClientID: config.ClientID(),
 }
 
 // Main is the entrypoint of the fairshare server CLI.
