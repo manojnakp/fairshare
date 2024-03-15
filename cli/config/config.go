@@ -12,7 +12,7 @@ const (
 	DefaultPort     = "8080"
 	DefaultDB       = "postgres://postgres:secret@localhost:5432/postgres?sslmode=disable"
 	DefaultAuth     = "http://localhost:9090"
-	DefaultClientID = "fairshare-web"
+	DefaultAudience = "fairshare-web"
 )
 
 // ErrConfigParse is a generic error that represents config parsing failed.
@@ -32,12 +32,12 @@ var Config = struct {
 	Log      LogLevel `json:"log,omitempty"`
 	DB       String   `json:"db,omitempty"`
 	Auth     String   `json:"auth,omitempty"`
-	ClientID String   `json:"client_id,omitempty"`
+	Audience String   `json:"audience,omitempty"`
 }{
 	Port:     DefaultPort,
 	DB:       DefaultDB,
 	Auth:     DefaultAuth,
-	ClientID: DefaultClientID,
+	Audience: DefaultAudience,
 }
 
 // Parse parses the configuration from command line flags and environment
@@ -85,7 +85,7 @@ func Auth() string {
 	return Config.Auth.Get().(string)
 }
 
-// ClientID returns Config.ClientID as a string. Not thread-safe.
-func ClientID() string {
-	return Config.ClientID.Get().(string)
+// Audience returns Config.Audience as a string. Not thread-safe.
+func Audience() string {
+	return Config.Audience.Get().(string)
 }

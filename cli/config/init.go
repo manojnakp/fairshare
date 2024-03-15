@@ -7,7 +7,7 @@ func init() {
 	EnvRegister(&Config.Log, "FAIRSHARE_LOG")
 	EnvRegister(&Config.DB, "FAIRSHARE_DB")
 	EnvRegister(&Config.Auth, "FAIRSHARE_AUTH")
-	EnvRegister(&Config.ClientID, "FAIRSHARE_CLIENT_ID")
+	EnvRegister(&Config.Audience, "FAIRSHARE_AUDIENCE")
 }
 
 // initialise command line flags for parsing configuration
@@ -18,7 +18,7 @@ func init() {
 	cmd.Var(&Config.DB, "db", "database URI for persistence [env: FAIRSHARE_DB]")
 	cmd.Var(&Config.Auth, "auth", "authorisation server url [env: FAIRSHARE_AUTH]")
 	cmd.Var(
-		&Config.ClientID, "client-id",
-		"OpenID Connect 'client_id' to verify ID Token [env: FAIRSHARE_CLIENT_ID]",
+		&Config.Audience, "audience",
+		"OpenID Connect 'aud' claim to verify ID Token [env: FAIRSHARE_AUDIENCE]",
 	)
 }

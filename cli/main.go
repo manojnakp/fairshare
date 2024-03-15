@@ -47,7 +47,7 @@ func Main() error {
 		return err
 	}
 	verifier := provider.Verifier(&oidc.Config{
-		ClientID: config.ClientID(),
+		ClientID: config.Audience(),
 	})
 	ctx = context.WithValue(ctx, internal.VerifierKey, verifier)
 
