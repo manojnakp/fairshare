@@ -1,56 +1,15 @@
-package api
+package mw
 
 import (
-	"encoding/json"
 	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"runtime/debug"
-	"strings"
 	"time"
 
 	"github.com/manojnakp/fairshare/internal"
 )
-
-// HealthChecker is the URI endpoint at which heart beat messages are served.
-var HealthChecker = "/health"
-
-// Middleware is an alias for HTTP middleware.
-type Middleware = func(http.Handler) http.Handler
-
-// With constructs a chain of middlewares using the list of passed ones.
-// The first middleware in the argument gets wrapped around by the later
-// ones. So, outermost middleware (say logger) should be last argument.
-func With(middlewares ...Middleware) Middleware {
-	return func(next http.Handler) http.Handler {
-		for _, mw := range middlewares {
-			next = mw(next)
-		}
-		return next
-	}
-}
-
-// HeartBeat is an HTTP Middleware that listens to heart beat (alive)
-// requests at the HealthChecker endpoint. Basically, it returns with a
-// `200 OK` message as long as the server is alive and kicking.
-func HeartBeat(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if !strings.EqualFold(r.URL.Path, HealthChecker) {
-			/* path does not match */
-			next.ServeHTTP(w, r)
-			return
-		}
-		const MethodGet = "GET"
-		if r.Method != MethodGet {
-			/* method does not match */
-			AllowOnly{MethodGet}.ServeHTTP(w, r)
-			return
-		}
-		/* prevent caching */
-		w.Header().Set("Cache-Control", "no-cache, no-store")
-		PlainText(http.StatusOK).ServeHTTP(w, r)
-	})
-}
 
 // Logger is an HTTP Middleware to log handling information about every
 // incoming request.
@@ -60,7 +19,7 @@ func Logger(next http.Handler) http.Handler {
 		defer func() {
 			if err := recover(); err != nil {
 				code := http.StatusInternalServerError
-				PlainText(code).ServeHTTP(w, r)
+				internal.PlainText(code).ServeHTTP(w, r)
 				log.Println(err, string(debug.Stack()))
 			}
 		}()
@@ -81,8 +40,7 @@ func Logger(next http.Handler) http.Handler {
 		entry.Size = wrapper.BodyLength
 		entry.Outgoing = wrapper.Header()
 		/* log the record */
-		buf, _ := json.Marshal(entry)
-		log.Println(string(buf))
+		slog.Info("log record", entry)
 	})
 }
 

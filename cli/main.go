@@ -11,6 +11,7 @@ import (
 	"github.com/manojnakp/fairshare/cli/config"
 	"github.com/manojnakp/fairshare/internal"
 
+	"github.com/coreos/go-oidc/v3/oidc"
 	_ "github.com/lib/pq"
 )
 
@@ -20,23 +21,37 @@ var LogSource = true
 
 // Main is the entrypoint of the fairshare server CLI.
 func Main() error {
-	var ctx = context.Background()
+	ctx := context.Background()
+
 	/* parse config */
 	err := config.Parse()
 	if err != nil {
 		return err
 	}
+
 	/* setup slog */
 	InitSlog(os.Stdout, config.Log())
 	slog.Info("config parse", "config", config.Config)
+
 	/* setup database */
 	db, err := InitDB()
 	if err != nil {
 		return err
 	}
 	slog.Info("db connected")
-	/* setup server */
 	ctx = context.WithValue(ctx, internal.DBKey, db)
+
+	/* setup auth provider */
+	provider, err := oidc.NewProvider(ctx, config.Auth())
+	if err != nil {
+		return err
+	}
+	verifier := provider.Verifier(&oidc.Config{
+		ClientID: config.Audience(),
+	})
+	ctx = context.WithValue(ctx, internal.VerifierKey, verifier)
+
+	/* setup server */
 	srv := api.ServerBuilder{
 		Host:    config.Host(),
 		Port:    config.Port(),
