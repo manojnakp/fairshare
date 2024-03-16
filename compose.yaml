@@ -13,6 +13,20 @@ services:
       POSTGRES_DB: fairshare
     healthcheck:
       test: ["CMD", "pg_isready", "--username=postgres", "--dbname=fairshare"]
+  migrate:
+    image: migrate/migrate:v4.17.0
+    volumes:
+      - './db/migrations:/migrations:ro,z'
+    command:
+      - "-path=/migrations"
+      - "-database=postgres://postgres:secret@db:5432/fairshare?sslmode=disable"
+      - "up"
+    networks:
+      - database
+    depends_on:
+      db:
+        required: true
+        condition: service_healthy
   api:
     build: .
     ports:
@@ -23,9 +37,9 @@ services:
       - database
       - backend
     depends_on:
-      db:
+      migrate:
         required: true
-        condition: service_healthy
+        condition: service_completed_successfully
       kc:
         required: true
         condition: service_healthy
