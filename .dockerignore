@@ -1,0 +1,13 @@
+# IDE
+.vscode/
+.idea/
+
+# nodejs dependencies
+node_modules/
+
+# documentation
+docs/
+
+# container
+.dockerignore
+Dockerfile
