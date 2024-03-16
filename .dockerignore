@@ -2,8 +2,12 @@
 .vscode/
 .idea/
 
-# nodejs dependencies
+# nodejs related
 node_modules/
+.commitlintrc.json
+.node-version
+package.json
+package-lock.json
 
 # documentation
 docs/
@@ -11,3 +15,14 @@ docs/
 # container
 .dockerignore
 Dockerfile
+keycloak.Dockerfile
+compose.yaml
+
+# git
+.git/
+.gitignore
+
+# unwanted files
+.editorconfig
+LICENSE
+README.md
