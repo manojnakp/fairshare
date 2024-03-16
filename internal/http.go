@@ -1,4 +1,4 @@
-package api
+package internal
 
 import (
 	"fmt"
@@ -6,22 +6,6 @@ import (
 	"net/http"
 	"strings"
 )
-
-// AllowOnly is [http.Handler] in case of HTTP method not in this list of
-// allowed methods. It responds with a `405 Method Not Allowed` PlainText
-// response along with 'Allow' header set to the list of allowed methods.
-type AllowOnly []string
-
-// ServeHTTP implements [http.Handler].
-//
-// Note: Empty allow list has semantic meaning of no method allowed on the
-// target. See [HTTP Semantics] for more info.
-//
-// [HTTP Semantics]: https://www.rfc-editor.org/rfc/rfc9110.html#name-allow
-func (allowed AllowOnly) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Allow", strings.Join(allowed, ", "))
-	PlainText(http.StatusMethodNotAllowed).ServeHTTP(w, r)
-}
 
 // PlainText is [http.Handler] to write a plain text response consisting
 // of status code and text message.
@@ -46,4 +30,20 @@ func (status PlainText) String() string {
 // writeMessage writes code and HTTP status message for given status code.
 func writeMessage(w io.Writer, code int) (int, error) {
 	return fmt.Fprintf(w, "%d %s", code, http.StatusText(code))
+}
+
+// AllowOnly is [http.Handler] in case of HTTP method not in this list of
+// allowed methods. It responds with a `405 Method Not Allowed` PlainText
+// response along with 'Allow' header set to the list of allowed methods.
+type AllowOnly []string
+
+// ServeHTTP implements [http.Handler].
+//
+// Note: Empty allow list has semantic meaning of no method allowed on the
+// target. See [HTTP Semantics] for more info.
+//
+// [HTTP Semantics]: https://www.rfc-editor.org/rfc/rfc9110.html#name-allow
+func (allowed AllowOnly) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Allow", strings.Join(allowed, ", "))
+	PlainText(http.StatusMethodNotAllowed).ServeHTTP(w, r)
 }
