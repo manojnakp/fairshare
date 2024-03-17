@@ -40,7 +40,7 @@ func Logger(next http.Handler) http.Handler {
 		entry.Size = wrapper.BodyLength
 		entry.Outgoing = wrapper.Header()
 		/* log the record */
-		slog.Info("log record", entry)
+		slog.Info("log record", "log-entry", entry)
 	})
 }
 

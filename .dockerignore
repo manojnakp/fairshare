@@ -1,0 +1,29 @@
+# IDE
+.vscode/
+.idea/
+
+# nodejs related
+node_modules/
+.commitlintrc.json
+.node-version
+package.json
+package-lock.json
+
+# documentation
+docs/
+
+# container
+.dockerignore
+Dockerfile
+keycloak.Dockerfile
+compose.yaml
+
+# git
+.git/
+.github/
+.gitignore
+
+# unwanted files
+.editorconfig
+LICENSE
+README.md
